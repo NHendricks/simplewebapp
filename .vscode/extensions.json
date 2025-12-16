@@ -1,0 +1,8 @@
+{
+  "recommendations": [
+    "leodevbro.blockman",
+    "esbenp.prettier-vscode",
+    "christian-kohler.path-intellisense",
+    "runem.lit-plugin"
+  ]
+}

@@ -1,0 +1,8 @@
+:root {
+  /* set css variables globally and use them in your sites */
+  --default-font-size: 5.5vw;
+}
+
+body {
+  margin: 1px;
+}
