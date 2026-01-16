@@ -1,24 +1,12 @@
 import { LitElement, css, html } from 'lit'
+import '../navigation/ResponsiveMenu'
 
-export class ReisebusLayout extends LitElement {
+export class Faq extends LitElement {
   static styles = css`
     :host {
       display: block;
       font-family: Arial, sans-serif;
       color: #333;
-    }
-
-    /* Bildbereich */
-    .hero {
-      width: 100%;
-      height: 280px;
-      overflow: hidden;
-    }
-
-    .hero img {
-      width: 100%;
-      height: 100%;
-      object-fit: cover;
     }
 
     /* Inhalt */
@@ -53,15 +41,22 @@ export class ReisebusLayout extends LitElement {
 
   render() {
     return html`
-      <div class="hero">
-        <img src="./photo-1544620347-c4fd4a3d5957.jpg" alt="Reisebus" />
-      </div>
-
       <div class="content">
-        <h1>Reisen mit dem Bus</h1>
+        <h1>FAQ</h1>
+        <h2>Simplify your life</h2>
+
+        <div class="columns">
+          <p>
+            Programmieren ist wie entrümpeln. Sauber und aufgeräumt steht nichts
+            im weg.
+          </p>
+          <p>
+            Das Pojekt wird nicht mittelfristig vergurkt und immer komplexer.
+          </p>
+        </div>
       </div>
     `
   }
 }
 
-customElements.define('simple-reisen', ReisebusLayout)
+customElements.define('simple-faq', Faq)

@@ -1,4 +1,6 @@
 import { Router } from '@vaadin/router'
+import './simpleweb/boundary/navigation/ResponsiveMenu'
+import './simpleweb/boundary/pages/Faq'
 import './simpleweb/boundary/pages/Reisen'
 import './simpleweb/boundary/pages/Start'
 
@@ -9,6 +11,7 @@ export const router = new Router(outlet)
 router.setRoutes([
   { path: '/', component: 'simple-start' },
   { path: '/reisen', component: 'simple-reisen' },
+  { path: '/faq', component: 'simple-faq' },
   { path: '(.*)', component: 'simple-start' }, // fallback
 ])
 

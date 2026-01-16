@@ -1,4 +1,5 @@
 import { LitElement, css, html } from 'lit'
+import '../navigation/ResponsiveMenu'
 
 export class ReisebusLayout extends LitElement {
   static styles = css`
@@ -6,26 +7,6 @@ export class ReisebusLayout extends LitElement {
       display: block;
       font-family: Arial, sans-serif;
       color: #333;
-    }
-
-    /* Menüleiste */
-    nav {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      background: #1e293b;
-      color: white;
-      padding: 1rem;
-    }
-
-    nav a {
-      color: white;
-      text-decoration: none;
-      font-weight: 500;
-    }
-
-    nav a:hover {
-      text-decoration: underline;
     }
 
     /* Bildbereich */
@@ -73,19 +54,8 @@ export class ReisebusLayout extends LitElement {
 
   render() {
     return html`
-      <nav>
-        <a href="/">Start</a>
-        <a href="/reisen">Reisen</a>
-        <a href="#">Busflotte</a>
-        <a href="#">Service</a>
-        <a href="#">Kontakt</a>
-      </nav>
-
       <div class="hero">
-        <img
-          src="https://images.unsplash.com/photo-1544620347-c4fd4a3d5957"
-          alt="Reisebus"
-        />
+        <img src="./photo-1544620347-c4fd4a3d5957.jpg" alt="Reisebus" />
       </div>
 
       <div class="content">
