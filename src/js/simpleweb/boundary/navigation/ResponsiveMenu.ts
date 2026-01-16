@@ -567,6 +567,7 @@ export class ResponsiveMenu extends LitElement {
             @click=${() => this.openActionsOverlay()}
           >
             ${item.label}
+            ${this.openSubmenu === item.label.toLowerCase() ? '▼' : '▶'}
           </a>
         `
       }
