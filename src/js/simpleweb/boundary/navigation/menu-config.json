@@ -1,0 +1,48 @@
+{
+  "mainNavigation": [
+    {
+      "label": "Start",
+      "path": "/"
+    },
+    {
+      "label": "Reisen",
+      "path": "/reisen"
+    },
+    {
+      "label": "FAQ",
+      "path": "/faq"
+    },
+    {
+      "label": "Aktionen",
+      "hasSubmenu": true,
+      "submenu": [
+        {
+          "label": "Anlegen",
+          "path": "/aktionen/anlegen"
+        },
+        {
+          "label": "Ändern",
+          "path": "/aktionen/aendern"
+        },
+        {
+          "label": "Löschen",
+          "path": "/aktionen/loeschen"
+        }
+      ]
+    }
+  ],
+  "bonusActions": [
+    {
+      "label": "Datenschutz",
+      "path": "/datenschutz"
+    },
+    {
+      "label": "Impressum",
+      "path": "/impressum"
+    },
+    {
+      "label": "Kontakt",
+      "path": "/kontakt"
+    }
+  ]
+}

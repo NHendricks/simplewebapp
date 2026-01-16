@@ -1,6 +1,19 @@
 import { Router } from '@vaadin/router'
 import { LitElement, css, html } from 'lit'
 import { customElement, state } from 'lit/decorators.js'
+import menuConfig from './menu-config.json' with { type: 'json' }
+
+interface MenuItem {
+  label: string
+  path?: string
+  hasSubmenu?: boolean
+  submenu?: MenuItem[]
+}
+
+interface MenuConfig {
+  mainNavigation: MenuItem[]
+  bonusActions: MenuItem[]
+}
 
 @customElement('responsive-menu')
 export class ResponsiveMenu extends LitElement {
@@ -11,6 +24,8 @@ export class ResponsiveMenu extends LitElement {
   @state() private openSubmenu: string | null = null
 
   private scrollHandler?: () => void
+  private resizeHandler?: () => void
+  private config: MenuConfig = menuConfig as MenuConfig
 
   static styles = css`
     :host {
@@ -108,24 +123,29 @@ export class ResponsiveMenu extends LitElement {
     .portrait-nav {
       display: flex;
       flex-direction: column;
-      gap: 1rem;
-      width: 80%;
+      gap: clamp(0.5rem, 1.5vh, 1rem);
+      width: 85%;
       max-width: 400px;
+      max-height: 85vh;
+      overflow-y: auto;
     }
 
     .portrait-nav-item {
       background: var(--secondary-bg);
       border: 1px solid var(--border-color);
       border-radius: 8px;
-      padding: 1.2rem;
+      padding: clamp(0.8rem, 2vh, 1.2rem);
       color: var(--text-primary);
       text-decoration: none;
-      font-size: 1.5rem;
+      font-size: clamp(1rem, 3.5vh, 1.5rem);
       font-weight: 500;
       text-align: center;
       cursor: pointer;
       transition: all var(--transition-speed);
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .portrait-nav-item:hover {
@@ -135,23 +155,26 @@ export class ResponsiveMenu extends LitElement {
     }
 
     .portrait-submenu {
-      margin-top: 0.5rem;
-      padding-left: 1rem;
+      margin-top: clamp(0.3rem, 1vh, 0.5rem);
+      padding-left: clamp(0.5rem, 1.5vw, 1rem);
       display: flex;
       flex-direction: column;
-      gap: 0.5rem;
+      gap: clamp(0.3rem, 1vh, 0.5rem);
     }
 
     .portrait-submenu-item {
       background: var(--accent-color);
       border-radius: 6px;
-      padding: 0.8rem;
+      padding: clamp(0.6rem, 1.5vh, 0.8rem);
       color: var(--text-primary);
       text-decoration: none;
-      font-size: 1.1rem;
+      font-size: clamp(0.9rem, 2.5vh, 1.1rem);
       text-align: center;
       cursor: pointer;
       transition: all var(--transition-speed);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .portrait-submenu-item:hover {
@@ -160,25 +183,28 @@ export class ResponsiveMenu extends LitElement {
     }
 
     .portrait-bonus {
-      margin-top: 2rem;
-      padding-top: 2rem;
+      margin-top: clamp(1rem, 3vh, 2rem);
+      padding-top: clamp(1rem, 3vh, 2rem);
       border-top: 2px solid var(--border-color);
       display: flex;
       flex-direction: column;
-      gap: 0.8rem;
+      gap: clamp(0.4rem, 1.5vh, 0.8rem);
     }
 
     .portrait-bonus-item {
       background: transparent;
       border: 1px solid var(--border-color);
       border-radius: 6px;
-      padding: 0.8rem;
+      padding: clamp(0.6rem, 1.5vh, 0.8rem);
       color: var(--text-secondary);
       text-decoration: none;
-      font-size: 1rem;
+      font-size: clamp(0.85rem, 2vh, 1rem);
       text-align: center;
       cursor: pointer;
       transition: all var(--transition-speed);
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
 
     .portrait-bonus-item:hover {
@@ -404,6 +430,114 @@ export class ResponsiveMenu extends LitElement {
     Router.go(path)
   }
 
+  private renderPortraitMainNav() {
+    return this.config.mainNavigation.map((item) => {
+      if (item.hasSubmenu && item.submenu) {
+        return html`
+          <div>
+            <div
+              class="portrait-nav-item"
+              @click=${() => this.toggleSubmenu(item.label.toLowerCase())}
+            >
+              ${item.label}
+              ${this.openSubmenu === item.label.toLowerCase() ? '▼' : '▶'}
+            </div>
+            ${this.openSubmenu === item.label.toLowerCase()
+              ? html`
+                  <div class="portrait-submenu">
+                    ${item.submenu.map(
+                      (sub) => html`
+                        <a
+                          class="portrait-submenu-item"
+                          @click=${() => this.handleNavigation(sub.path || '#')}
+                        >
+                          ${sub.label}
+                        </a>
+                      `,
+                    )}
+                  </div>
+                `
+              : ''}
+          </div>
+        `
+      }
+      return html`
+        <a
+          class="portrait-nav-item"
+          @click=${() => this.handleNavigation(item.path || '#')}
+        >
+          ${item.label}
+        </a>
+      `
+    })
+  }
+
+  private renderPortraitBonusNav() {
+    return this.config.bonusActions.map(
+      (item) => html`
+        <a
+          class="portrait-bonus-item"
+          @click=${() => this.handleNavigation(item.path || '#')}
+        >
+          ${item.label}
+        </a>
+      `,
+    )
+  }
+
+  private renderLandscapeMainNav() {
+    return this.config.mainNavigation.map((item) => {
+      if (item.hasSubmenu && item.submenu) {
+        const submenuKey = `${item.label.toLowerCase()}-landscape`
+        return html`
+          <div class="submenu-container">
+            <div
+              class="landscape-nav-item"
+              @click=${() => this.toggleSubmenu(submenuKey)}
+            >
+              ${item.label} ${this.openSubmenu === submenuKey ? '▼' : '▶'}
+            </div>
+            <div
+              class="dropdown ${this.openSubmenu === submenuKey ? 'open' : ''}"
+            >
+              ${item.submenu.map(
+                (sub) => html`
+                  <a
+                    class="dropdown-item"
+                    @click=${() => this.handleNavigation(sub.path || '#')}
+                  >
+                    ${sub.label}
+                  </a>
+                `,
+              )}
+            </div>
+          </div>
+        `
+      }
+      return html`
+        <a
+          class="landscape-nav-item"
+          @click=${() => this.handleNavigation(item.path || '#')}
+        >
+          ${item.label}
+        </a>
+      `
+    })
+  }
+
+  private renderLandscapeBonusNav() {
+    return this.config.bonusActions.map(
+      (item) => html`
+        <a
+          class="landscape-bonus-item"
+          @click=${() => this.handleNavigation(item.path || '#')}
+        >
+          ${item.label}
+        </a>
+      `,
+    )
+  }
+
   render() {
     return html`
       <!-- Portrait Mode -->
@@ -423,81 +557,10 @@ export class ResponsiveMenu extends LitElement {
         <div class="fullscreen-menu ${this.isMenuOpen ? 'open' : ''}">
           <nav class="portrait-nav">
             <!-- Main Navigation -->
-            <a
-              class="portrait-nav-item"
-              @click=${() => this.handleNavigation('/')}
-            >
-              Start
-            </a>
-            <a
-              class="portrait-nav-item"
-              @click=${() => this.handleNavigation('/reisen')}
-            >
-              Reisen
-            </a>
-            <a
-              class="portrait-nav-item"
-              @click=${() => this.handleNavigation('/faq')}
-            >
-              FAQ
-            </a>
-            <div>
-              <div
-                class="portrait-nav-item"
-                @click=${() => this.toggleSubmenu('aktionen')}
-              >
-                Aktionen ${this.openSubmenu === 'aktionen' ? '▼' : '▶'}
-              </div>
-              ${this.openSubmenu === 'aktionen'
-                ? html`
-                    <div class="portrait-submenu">
-                      <a
-                        class="portrait-submenu-item"
-                        @click=${() =>
-                          this.handleNavigation('/aktionen/anlegen')}
-                      >
-                        Anlegen
-                      </a>
-                      <a
-                        class="portrait-submenu-item"
-                        @click=${() =>
-                          this.handleNavigation('/aktionen/aendern')}
-                      >
-                        Ändern
-                      </a>
-                      <a
-                        class="portrait-submenu-item"
-                        @click=${() =>
-                          this.handleNavigation('/aktionen/loeschen')}
-                      >
-                        Löschen
-                      </a>
-                    </div>
-                  `
-                : ''}
-            </div>
+            ${this.renderPortraitMainNav()}
 
             <!-- Bonus Actions -->
-            <div class="portrait-bonus">
-              <a
-                class="portrait-bonus-item"
-                @click=${() => this.handleNavigation('/datenschutz')}
-              >
-                Datenschutz
-              </a>
-              <a
-                class="portrait-bonus-item"
-                @click=${() => this.handleNavigation('/impressum')}
-              >
-                Impressum
-              </a>
-              <a
-                class="portrait-bonus-item"
-                @click=${() => this.handleNavigation('/kontakt')}
-              >
-                Kontakt
-              </a>
-            </div>
+            <div class="portrait-bonus">${this.renderPortraitBonusNav()}</div>
           </nav>
         </div>
       </div>
@@ -507,24 +570,7 @@ export class ResponsiveMenu extends LitElement {
         <header class="landscape-header ${this.isScrolled ? 'scrolled' : ''}">
           <!-- Bonus Actions -->
           <div class="landscape-bonus ${this.isScrolled ? 'hidden' : ''}">
-            <a
-              class="landscape-bonus-item"
-              @click=${() => this.handleNavigation('/datenschutz')}
-            >
-              Datenschutz
-            </a>
-            <a
-              class="landscape-bonus-item"
-              @click=${() => this.handleNavigation('/impressum')}
-            >
-              Impressum
-            </a>
-            <a
-              class="landscape-bonus-item"
-              @click=${() => this.handleNavigation('/kontakt')}
-            >
-              Kontakt
-            </a>
+            ${this.renderLandscapeBonusNav()}
           </div>
 
           <!-- Main Navigation -->
@@ -532,59 +578,7 @@ export class ResponsiveMenu extends LitElement {
             <div class="site-icon" @click=${() => this.handleNavigation('/')}>
               🌐
             </div>
-            <nav class="landscape-nav">
-              <a
-                class="landscape-nav-item"
-                @click=${() => this.handleNavigation('/')}
-              >
-                Start
-              </a>
-              <a
-                class="landscape-nav-item"
-                @click=${() => this.handleNavigation('/reisen')}
-              >
-                Reisen
-              </a>
-              <a
-                class="landscape-nav-item"
-                @click=${() => this.handleNavigation('/faq')}
-              >
-                FAQ
-              </a>
-              <div class="submenu-container">
-                <div
-                  class="landscape-nav-item"
-                  @click=${() => this.toggleSubmenu('aktionen-landscape')}
-                >
-                  Aktionen
-                  ${this.openSubmenu === 'aktionen-landscape' ? '▼' : '▶'}
-                </div>
-                <div
-                  class="dropdown ${this.openSubmenu === 'aktionen-landscape'
-                    ? 'open'
-                    : ''}"
-                >
-                  <a
-                    class="dropdown-item"
-                    @click=${() => this.handleNavigation('/aktionen/anlegen')}
-                  >
-                    Anlegen
-                  </a>
-                  <a
-                    class="dropdown-item"
-                    @click=${() => this.handleNavigation('/aktionen/aendern')}
-                  >
-                    Ändern
-                  </a>
-                  <a
-                    class="dropdown-item"
-                    @click=${() => this.handleNavigation('/aktionen/loeschen')}
-                  >
-                    Löschen
-                  </a>
-                </div>
-              </div>
-            </nav>
+            <nav class="landscape-nav">${this.renderLandscapeMainNav()}</nav>
           </div>
         </header>
       </div>
