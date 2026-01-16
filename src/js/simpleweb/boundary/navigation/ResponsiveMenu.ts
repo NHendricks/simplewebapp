@@ -22,6 +22,7 @@ export class ResponsiveMenu extends LitElement {
     .matches
   @state() private isScrolled = false
   @state() private openSubmenu: string | null = null
+  @state() private isActionsOverlayOpen = false
 
   private scrollHandler?: () => void
   private resizeHandler?: () => void
@@ -213,6 +214,116 @@ export class ResponsiveMenu extends LitElement {
       border-color: var(--accent-color);
     }
 
+    /* Actions Overlay (Portrait Mode) */
+    .actions-overlay {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      background: rgba(0, 0, 0, 0.85);
+      z-index: 1001;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity var(--transition-speed);
+      backdrop-filter: blur(5px);
+    }
+
+    .actions-overlay.open {
+      opacity: 1;
+      pointer-events: all;
+    }
+
+    .actions-modal {
+      background: linear-gradient(
+        135deg,
+        var(--secondary-bg) 0%,
+        var(--primary-bg) 100%
+      );
+      border: 2px solid var(--accent-color);
+      border-radius: 16px;
+      padding: 2rem;
+      width: 85%;
+      max-width: 400px;
+      box-shadow: 0 20px 60px rgba(0, 0, 0, 0.5);
+      position: relative;
+      transform: scale(0.8);
+      transition: transform var(--transition-speed);
+    }
+
+    .actions-overlay.open .actions-modal {
+      transform: scale(1);
+    }
+
+    .actions-modal-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 1.5rem;
+      padding-bottom: 1rem;
+      border-bottom: 2px solid var(--border-color);
+    }
+
+    .actions-modal-title {
+      font-size: 1.5rem;
+      font-weight: 600;
+      color: var(--text-primary);
+      margin: 0;
+    }
+
+    .close-btn {
+      background: transparent;
+      border: 2px solid var(--border-color);
+      border-radius: 50%;
+      width: 40px;
+      height: 40px;
+      cursor: pointer;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      color: var(--text-primary);
+      font-size: 1.5rem;
+      font-weight: bold;
+      transition: all var(--transition-speed);
+      line-height: 1;
+    }
+
+    .close-btn:hover {
+      background: var(--highlight-color);
+      border-color: var(--highlight-color);
+      transform: rotate(90deg);
+    }
+
+    .actions-list {
+      display: flex;
+      flex-direction: column;
+      gap: 1rem;
+    }
+
+    .action-item {
+      background: var(--accent-color);
+      border: 1px solid var(--border-color);
+      border-radius: 8px;
+      padding: 1.2rem;
+      color: var(--text-primary);
+      text-decoration: none;
+      font-size: 1.2rem;
+      font-weight: 500;
+      text-align: center;
+      cursor: pointer;
+      transition: all var(--transition-speed);
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+    }
+
+    .action-item:hover {
+      background: var(--highlight-color);
+      transform: translateY(-3px);
+      box-shadow: 0 6px 16px rgba(233, 69, 96, 0.4);
+    }
+
     /* Landscape Mode - Horizontal Header */
     .landscape-header {
       position: fixed;
@@ -396,6 +507,7 @@ export class ResponsiveMenu extends LitElement {
       this.isPortrait = e.matches
       this.isMenuOpen = false
       this.openSubmenu = null
+      this.isActionsOverlayOpen = false
     })
 
     // Monitor scroll in landscape mode
@@ -426,39 +538,36 @@ export class ResponsiveMenu extends LitElement {
     console.log('Navigate to:', path)
     this.isMenuOpen = false
     this.openSubmenu = null
+    this.isActionsOverlayOpen = false
     // Here you can integrate with your router
     Router.go(path)
+  }
+
+  private openActionsOverlay() {
+    this.isActionsOverlayOpen = true
+  }
+
+  private closeActionsOverlay() {
+    this.isActionsOverlayOpen = false
+  }
+
+  private handleBackdropClick(e: Event) {
+    if ((e.target as HTMLElement).classList.contains('actions-overlay')) {
+      this.closeActionsOverlay()
+    }
   }
 
   private renderPortraitMainNav() {
     return this.config.mainNavigation.map((item) => {
       if (item.hasSubmenu && item.submenu) {
+        // For "Aktionen", open overlay instead of inline submenu
         return html`
-          <div>
-            <div
-              class="portrait-nav-item"
-              @click=${() => this.toggleSubmenu(item.label.toLowerCase())}
-            >
-              ${item.label}
-              ${this.openSubmenu === item.label.toLowerCase() ? '▼' : '▶'}
-            </div>
-            ${this.openSubmenu === item.label.toLowerCase()
-              ? html`
-                  <div class="portrait-submenu">
-                    ${item.submenu.map(
-                      (sub) => html`
-                        <a
-                          class="portrait-submenu-item"
-                          @click=${() => this.handleNavigation(sub.path || '#')}
-                        >
-                          ${sub.label}
-                        </a>
-                      `,
-                    )}
-                  </div>
-                `
-              : ''}
-          </div>
+          <a
+            class="portrait-nav-item"
+            @click=${() => this.openActionsOverlay()}
+          >
+            ${item.label}
+          </a>
         `
       }
       return html`
@@ -470,6 +579,45 @@ export class ResponsiveMenu extends LitElement {
         </a>
       `
     })
+  }
+
+  private renderActionsOverlay() {
+    const aktionenItem = this.config.mainNavigation.find(
+      (item) => item.hasSubmenu && item.submenu,
+    )
+    if (!aktionenItem || !aktionenItem.submenu) return ''
+
+    return html`
+      <div
+        class="actions-overlay ${this.isActionsOverlayOpen ? 'open' : ''}"
+        @click=${this.handleBackdropClick}
+      >
+        <div class="actions-modal">
+          <div class="actions-modal-header">
+            <h2 class="actions-modal-title">${aktionenItem.label}</h2>
+            <button
+              class="close-btn"
+              @click=${this.closeActionsOverlay}
+              aria-label="Schließen"
+            >
+              ×
+            </button>
+          </div>
+          <div class="actions-list">
+            ${aktionenItem.submenu.map(
+              (action) => html`
+                <a
+                  class="action-item"
+                  @click=${() => this.handleNavigation(action.path || '#')}
+                >
+                  ${action.label}
+                </a>
+              `,
+            )}
+          </div>
+        </div>
+      </div>
+    `
   }
 
   private renderPortraitBonusNav() {
@@ -563,6 +711,9 @@ export class ResponsiveMenu extends LitElement {
             <div class="portrait-bonus">${this.renderPortraitBonusNav()}</div>
           </nav>
         </div>
+
+        <!-- Actions Overlay -->
+        ${this.renderActionsOverlay()}
       </div>
 
       <!-- Landscape Mode -->

@@ -33,7 +33,8 @@ Beim Aufklappen der normalen Aktionen erscheinen diese in einem nach unten sich 
 
 Das Menü soll modern aussehen und optisch ansprechend. Dark Theme.
 
-2. Anpassung (65 Cent):
+2. Anpassung:
+2.1 (65 Cent)
 Im Portait-Modus soll die Schrift gut lesbar sein und immer in den verfügbaren Bereich passen.
 Die einzelnen Punkte der beiden Menüs (landscape und portrait) sollen nicht redundant gepflegt werden, sondern aus einer separaten text-Datei kommen.
 
@@ -44,3 +45,7 @@ Die einzelnen Punkte der beiden Menüs (landscape und portrait) sollen nicht red
 - max-height: 85vh und overflow-y: auto für scrollbaren Inhalt im Portrait-Modus
 - text-overflow: ellipsis für lange Texte
 - Helper-Methoden zum dynamischen Rendern der Menüpunkte aus der Konfiguration
+
+2.2 (50 Cent)
+Im Portrait-Menü sollen die Aktionen (also anlegen, ändern, löschen) in einem Overlay eingeblendet werden, nicht im Menü selbst,
+da sonst das Layout wieder zerstört wird.
