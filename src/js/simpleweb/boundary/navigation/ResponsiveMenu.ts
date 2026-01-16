@@ -149,38 +149,101 @@ export class ResponsiveMenu extends LitElement {
       white-space: nowrap;
     }
 
-    .portrait-nav-item:hover {
-      background: var(--accent-color);
-      transform: translateX(10px);
-      box-shadow: 0 4px 8px rgba(233, 69, 96, 0.3);
+    .portrait-nav-item-wrapper {
+      position: relative;
     }
 
     .portrait-submenu {
-      margin-top: clamp(0.3rem, 1vh, 0.5rem);
-      padding-left: clamp(0.5rem, 1.5vw, 1rem);
+      position: absolute;
+      top: 100%;
+      left: 0;
+      right: 0;
       display: flex;
       flex-direction: column;
-      gap: clamp(0.3rem, 1vh, 0.5rem);
+      gap: 0.5rem;
+      margin-top: 0.5rem;
+      margin-left: 1rem;
+      margin-right: 1rem;
+      padding-left: 0.75rem;
+      border-left: 3px solid var(--highlight-color);
+      max-height: 0;
+      opacity: 0;
+      overflow: hidden;
+      transform: translateY(-10px);
+      z-index: 10;
+      transition:
+        max-height 0.4s cubic-bezier(0.4, 0, 0.2, 1),
+        opacity 0.3s ease,
+        transform 0.3s ease,
+        margin-top 0.3s ease;
+    }
+
+    .portrait-submenu.open {
+      max-height: 500px;
+      opacity: 1;
+      transform: translateY(0);
+      margin-top: 0.75rem;
+      background: linear-gradient(
+        135deg,
+        var(--primary-bg) 0%,
+        var(--secondary-bg) 100%
+      );
     }
 
     .portrait-submenu-item {
-      background: var(--accent-color);
+      background: linear-gradient(
+        135deg,
+        var(--accent-color) 0%,
+        rgba(15, 52, 96, 0.8) 100%
+      );
+      border: 1px solid rgba(233, 69, 96, 0.3);
       border-radius: 6px;
-      padding: clamp(0.6rem, 1.5vh, 0.8rem);
+      padding: clamp(0.8rem, 2vh, 1rem);
       color: var(--text-primary);
       text-decoration: none;
-      font-size: clamp(0.9rem, 2.5vh, 1.1rem);
+      font-size: clamp(0.9rem, 2.5vh, 1.2rem);
+      font-weight: 400;
       text-align: center;
       cursor: pointer;
-      transition: all var(--transition-speed);
+      transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+      position: relative;
       overflow: hidden;
-      text-overflow: ellipsis;
-      white-space: nowrap;
+    }
+
+    .portrait-submenu-item::before {
+      content: '';
+      position: absolute;
+      top: 0;
+      left: -100%;
+      width: 100%;
+      height: 100%;
+      background: linear-gradient(
+        90deg,
+        transparent,
+        rgba(233, 69, 96, 0.3),
+        transparent
+      );
+      transition: left 0.5s ease;
+    }
+
+    .portrait-submenu-item:hover::before {
+      left: 100%;
     }
 
     .portrait-submenu-item:hover {
-      background: var(--highlight-color);
-      transform: translateX(5px);
+      background: linear-gradient(
+        135deg,
+        var(--highlight-color) 0%,
+        rgba(233, 69, 96, 0.9) 100%
+      );
+      border-color: var(--highlight-color);
+      transform: translateX(8px) scale(1.02);
+      box-shadow: 0 4px 12px rgba(233, 69, 96, 0.4);
+    }
+
+    .portrait-submenu-item:active {
+      transform: translateX(6px) scale(0.98);
     }
 
     .portrait-bonus {
@@ -560,24 +623,44 @@ export class ResponsiveMenu extends LitElement {
   private renderPortraitMainNav() {
     return this.config.mainNavigation.map((item) => {
       if (item.hasSubmenu && item.submenu) {
-        // For "Aktionen", open overlay instead of inline submenu
+        const key = item.label.toLowerCase()
+
         return html`
-          <a
-            class="portrait-nav-item"
-            @click=${() => this.openActionsOverlay()}
-          >
-            ${item.label}
-            ${this.openSubmenu === item.label.toLowerCase() ? '▼' : '▶'}
-          </a>
+          <div class="portrait-nav-item-wrapper">
+            <div
+              class="portrait-nav-item"
+              @click=${() => this.toggleSubmenu(key)}
+            >
+              ${item.label}
+              <span style="float:right">
+                ${this.openSubmenu === key ? '✕' : '▸'}
+              </span>
+            </div>
+            <div
+              class="portrait-submenu ${this.openSubmenu === key ? 'open' : ''}"
+            >
+              ${item.submenu.map(
+                (sub) => html`
+                  <div
+                    class="portrait-submenu-item"
+                    @click=${() => this.handleNavigation(sub.path || '#')}
+                  >
+                    ${sub.label}
+                  </div>
+                `,
+              )}
+            </div>
+          </div>
         `
       }
+
       return html`
-        <a
+        <div
           class="portrait-nav-item"
           @click=${() => this.handleNavigation(item.path || '#')}
         >
           ${item.label}
-        </a>
+        </div>
       `
     })
   }
