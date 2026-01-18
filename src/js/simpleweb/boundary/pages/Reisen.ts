@@ -54,7 +54,7 @@ export class ReisebusLayout extends LitElement {
   render() {
     return html`
       <div class="hero">
-        <img src="./photo-1544620347-c4fd4a3d5957.jpg" alt="Reisebus" />
+        <img src="./assets/photo-1544620347-c4fd4a3d5957.jpg" alt="Reisebus" />
       </div>
 
       <div class="content">
