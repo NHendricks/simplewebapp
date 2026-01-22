@@ -1,6 +1,6 @@
 # simplewebapp
 
-Wir nutzen hier lit 8https://lit.dev/docs/v1/lit-html/introduction/) und den vaadin router 8https://github.com/vaadin/router), um einfach und schnell mit chatgpt schicke Webseiten zu generieren.
+Wir nutzen hier lit (https://lit.dev/docs/v1/lit-html/introduction/) und den vaadin router (https://github.com/vaadin/router), um einfach und schnell mit chatgpt schicke Webseiten zu generieren.
 
 Warum? Ich will ein minimales einfaches Setup, das ich später auch nicht upgraden oder ständig pflegen muss.
 Je näher am Standard, desto unabhängiger bin ich für die Zukunft. Bibliotheken kann ich upgraden oder ersetzen, Frameworks muss ich regelmäßig upgraden und kann sie im Grunde nie ersetzen, ohne alles neu zu schreiben.
@@ -26,4 +26,4 @@ https://www.youtube.com/watch?v=4At08st9wlQ
 
 # Doku
 
-MDW Web Standards. Google beispielsweise nach "mdn web components" => https://developer.mozilla.org/de/docs/Web/API/Web_components
+MDN Web Standards. Schöne und einfache API. Google beispielsweise nach "mdn web components" => https://developer.mozilla.org/de/docs/Web/API/Web_components. Oder "mdn HtmlInputElement" => https://developer.mozilla.org/de/docs/Web/API/HTMLInputElement.
