@@ -48,7 +48,7 @@ export class Faq extends LitElement {
         <div class="columns">
           <p>
             Programmieren ist wie entrümpeln. Sauber und aufgeräumt steht nichts
-            im weg.
+            im Weg.
           </p>
           <p>
             Das Projekt wird nicht mittelfristig vergurkt und immer komplexer.
