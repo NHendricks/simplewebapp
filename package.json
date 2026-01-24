@@ -7,6 +7,7 @@
     "mobile"
   ],
   "scripts": {
+    "installDependencies": "npm i",
     "start": "vite",
     "build": "vite build",
     "preview": "vite preview"
