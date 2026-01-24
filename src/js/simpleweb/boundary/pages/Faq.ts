@@ -51,7 +51,7 @@ export class Faq extends LitElement {
             im weg.
           </p>
           <p>
-            Das Pojekt wird nicht mittelfristig vergurkt und immer komplexer.
+            Das Projekt wird nicht mittelfristig vergurkt und immer komplexer.
           </p>
         </div>
       </div>
