@@ -1,12 +1,11 @@
 import { LitElement, css, html } from 'lit'
-import '../navigation/ResponsiveMenu'
 
 export class ReisebusLayout extends LitElement {
   static styles = css`
     :host {
       display: block;
       font-family: Arial, sans-serif;
-      color: #333;
+      color: #c4bebe;
     }
 
     /* Bildbereich */

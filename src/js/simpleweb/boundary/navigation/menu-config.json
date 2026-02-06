@@ -13,6 +13,10 @@
       "path": "/faq"
     },
     {
+      "label": "Taschenrechner",
+      "path": "/taschenrechner"
+    },
+    {
       "label": "Aktionen",
       "hasSubmenu": true,
       "submenu": [

@@ -1,12 +1,11 @@
 import { LitElement, css, html } from 'lit'
-import '../navigation/ResponsiveMenu'
 
 export class Faq extends LitElement {
   static styles = css`
     :host {
       display: block;
       font-family: Arial, sans-serif;
-      color: #333;
+      color: #c4bebe;
     }
 
     /* Inhalt */
@@ -25,17 +24,12 @@ export class Faq extends LitElement {
       color: #475569;
     }
 
-    .columns {
-      display: grid;
-      grid-template-columns: 1fr 1fr;
-      gap: 2rem;
-      margin-top: 1rem;
+    .list {
+      font-size: x-large;
     }
 
-    @media (max-width: 768px) {
-      .columns {
-        grid-template-columns: 1fr;
-      }
+    .list-entry {
+      margin-top: 1em;
     }
   `
 
@@ -45,14 +39,22 @@ export class Faq extends LitElement {
         <h1>FAQ</h1>
         <h2>Simplify your life</h2>
 
-        <div class="columns">
-          <p>
-            Programmieren ist wie entrümpeln. Sauber und aufgeräumt steht nichts
-            im Weg.
-          </p>
-          <p>
-            Das Projekt wird nicht mittelfristig vergurkt und immer komplexer.
-          </p>
+        <div class="list">
+          <ul>
+            <li class="list-entry">
+              In der index.html werden das Menu und die Hauptseite definiert.
+              Die app.ts wird referenziert.
+            </li>
+            <li class="list-entry">
+              In der app.ts werden alle Seiten importiert (auch das Menu) und je
+              nach Route wird eine andere Hauptseite angezeigt.
+            </li>
+            <li class="list-entry">
+              In der menu-config.json werden alle Aktionen (normal, Popupmenu
+              und Bonus-Aktionen) und die entsprechende Route für die Seite
+              definiert.
+            </li>
+          </ul>
         </div>
       </div>
     `

@@ -5,7 +5,7 @@ export class ReisebusLayout extends LitElement {
     :host {
       display: block;
       font-family: Arial, sans-serif;
-      color: #333;
+      color: #c4bebe;
     }
 
     /* Bildbereich */
@@ -59,6 +59,15 @@ export class ReisebusLayout extends LitElement {
 
       <div class="content">
         <h1>Reisen mit dem Bus</h1>
+        Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy
+        eirmod tempor invidunt ut labore et dolore magna aliquyam erat, sed diam
+        voluptua. At vero eos et accusam et justo duo dolores et ea rebum. Stet
+        clita kasd gubergren, no sea takimata sanctus est Lorem ipsum dolor sit
+        amet. Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam
+        nonumy eirmod tempor invidunt ut labore et dolore magna aliquyam erat,
+        sed diam voluptua. At vero eos et accusam et justo duo dolores et ea
+        rebum. Stet clita kasd gubergren, no sea takimata sanctus est Lorem
+        ipsum dolor sit amet.
       </div>
     `
   }
